@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+
+# Secrets
+.env
+.aws/
+*.pem
+credentials
+config
+
+# Generated reports
+reports/*.json
+reports/*.csv
+
+# IDE and OS
+.vscode/
+.DS_Store
