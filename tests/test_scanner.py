@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from aws_costguard.scanner import CostGuardScanner
 
@@ -147,6 +147,32 @@ class TestCostGuardScanner(unittest.TestCase):
         findings = scanner.analyze_idle_instances(instances)
 
         self.assertEqual(findings, [])
+
+
+class TestLambdaHandler(unittest.TestCase):
+    @patch("aws_costguard.lambda_handler.CostGuardScanner")
+    def test_handler_returns_scan_report(self, mock_scanner_class):
+        expected_report = {
+            "project": "AWS CostGuard",
+            "mode": "READ_ONLY",
+            "summary": {
+                "ec2_instances_discovered": 0,
+                "potentially_idle_instances": 0,
+                "unattached_ebs_volumes": 0,
+                "unassociated_elastic_ips": 0,
+            },
+        }
+
+        mock_scanner = mock_scanner_class.return_value
+        mock_scanner.scan.return_value = expected_report
+
+        from aws_costguard.lambda_handler import handler
+
+        result = handler({}, None)
+
+        self.assertEqual(result, expected_report)
+        mock_scanner_class.assert_called_once_with()
+        mock_scanner.scan.assert_called_once_with()
 
 
 if __name__ == "__main__":
