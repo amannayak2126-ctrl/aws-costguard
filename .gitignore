@@ -18,3 +18,7 @@ reports/*.csv
 # IDE and OS
 .vscode/
 .DS_Store
+
+# Generated Lambda deployment artifacts
+/build/
+/aws-costguard-lambda.zip
